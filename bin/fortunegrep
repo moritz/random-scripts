@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $pattern = shift @ARGV;
+local $/ = "%\n";
+while (<>) {
+    print if m/$pattern/m;
+}

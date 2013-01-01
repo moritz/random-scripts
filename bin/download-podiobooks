@@ -1,0 +1,41 @@
+#!/usr/bin/perl
+use 5.012;
+use strict;
+use warnings;
+BEGIN {
+    $ENV{MOJO_MAX_MESSAGE_SIZE} = 1e32;
+}
+use Mojo::UserAgent;
+use autodie;
+
+
+my $ua = Mojo::UserAgent->new->max_redirects(5);
+
+
+my $template = shift // die "Usage: $0 <URL>\n";
+
+$template =~ s/.*\K(\d\d)\.mp3/%02d.mp3/
+    or die "Cannot make sense of the URL format :(";
+
+my $count = 0;
+while (1) {
+    $count++;
+    my $url = sprintf $template, $count;
+    my $filename = $url;
+    $filename =~ s{.*/}{};
+    say "$url -> $filename";
+    my $tx = $ua->get($url);
+    if (my $res = $tx->success) {
+        say $res->code;
+        open my $OUT, '>:raw', $filename;
+        print $OUT $res->body;
+        close $OUT;
+    }
+    else {
+        my ($message, $code) = $tx->error;
+        warn "Failed to get URL $url: $code $message";
+        last;
+    }
+}
+
+# vim: ft=perl
