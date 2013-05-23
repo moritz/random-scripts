@@ -6,7 +6,6 @@ use File::Temp qw/tempfile/;
 
 die "Usage: $0 <filename>\n" unless @ARGV;
 for my $infile (@ARGV) {
-
     unless (-e $infile) {
         warn "'$infile' does not exist\n";
         next;
@@ -19,6 +18,11 @@ for my $infile (@ARGV) {
     # -vc null -vo null -ao pcm:fast
     system('mplayer', "-ao", "pcm:fast:file=$tempfile", '-vo', 'null', '-vc', 'null', $infile);
     system('lame', '-h', $tempfile, $outfile);
-    say "Wrote output to '$outfile', if you were lucky :-)";
+    if (-e $outfile && -s $outfile) {
+        say "Wrote output to '$outfile', if you were lucky :-)";
+    }
+    else {
+        say "There was an error producing '$outfile'";
+    }
 }
 
