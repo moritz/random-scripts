@@ -1,0 +1,24 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use 5.010;
+use File::Temp qw/tempfile/;
+
+die "Usage: $0 <filename>\n" unless @ARGV;
+for my $infile (@ARGV) {
+
+    unless (-e $infile) {
+        warn "'$infile' does not exist\n";
+        next;
+    }
+
+    (my $outfile = $infile) =~ s/.*\K\..*/.mp3/;
+
+    my ($fh, $tempfile) = tempfile;
+    close $fh;
+    # -vc null -vo null -ao pcm:fast
+    system('mplayer', "-ao", "pcm:fast:file=$tempfile", '-vo', 'null', '-vc', 'null', $infile);
+    system('lame', '-h', $tempfile, $outfile);
+    say "Wrote output to '$outfile', if you were lucky :-)";
+}
+
