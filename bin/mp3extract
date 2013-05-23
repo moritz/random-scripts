@@ -16,8 +16,8 @@ for my $infile (@ARGV) {
     my ($fh, $tempfile) = tempfile;
     close $fh;
     # -vc null -vo null -ao pcm:fast
-    system('mplayer', "-ao", "pcm:fast:file=$tempfile", '-vo', 'null', '-vc', 'null', $infile);
-    system('lame', '-h', $tempfile, $outfile);
+    system('mplayer', '-quiet', "-ao", "pcm:fast:file=$tempfile", '-vo', 'null', '-vc', 'null', $infile);
+    system('lame', '--quiet', '-h', $tempfile, $outfile);
     if (-e $outfile && -s $outfile) {
         say "Wrote output to '$outfile', if you were lucky :-)";
     }
