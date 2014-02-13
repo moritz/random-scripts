@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+use Time::Local qw(timelocal);
+
+
+if (@ARGV) {
+    my $date = shift @ARGV;
+    if ($date =~ m/^(\d{4})-(\d\d)-(\d\d)$/){
+        my ($year, $month, $mday) = ($1, $2, $3);
+        my ($hr, $min, $sec) = (0, 0, 0);
+        my $time;
+        if ($time = shift(@ARGV)
+            and $time =~ m/^(\d{1,2}):(\d\d)(?::(\d\d))?$/) {
+
+            ($hr, $min, $sec) = ($1, $2, $3||0);
+        }
+        print timelocal($sec, $min, $hr, $mday, $month - 1, $year - 1900), $/;
+    }
+
+} else {
+    print time, $/;
+}
